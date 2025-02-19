@@ -1,19 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import MuiCard from '@mui/material/Card';
-import {styled} from '@mui/material/styles';
+import { Box, Button, Checkbox, CssBaseline, FormControlLabel, FormLabel, FormControl, Link, TextField, Typography, Stack, Card as MuiCard, styled } from '@mui/material';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const Card = styled(MuiCard)(({theme}) => ({
     display: 'flex',
@@ -58,36 +48,40 @@ const SignInContainer = styled(Stack)(({theme}) => ({
 }));
 
 export default function SignIn() {
+  const { login } = useAuth();
+  const router = useRouter();
 
-    return (
-        <>
-            <CssBaseline enableColorScheme/>
-            <SignInContainer direction="column" justifyContent="space-between">
-                <Card variant="outlined">
-                    <Typography
-                        component="h1"
-                        variant="h4"
-                        sx={{width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)'}}
-                    >
-                        Sign in
-                    </Typography>
-                    <Box
-                        component="form"
-                        onSubmit={() => {
-                        }}
-                        noValidate
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            width: '100%',
-                            gap: 2,
-                        }}
-                    >
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [error, setError] = React.useState('');
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError('');
+
+    try {
+      await login(email, password);
+      router.push('/'); // Redirect after successful login
+    } catch (err) {
+      setError('Invalid email or password');
+    }
+  };
+
+  return (
+    <>
+      <CssBaseline />
+      <SignInContainer>
+        <Card variant="outlined">
+                    <Typography component="h1" variant="h4" sx={{width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)'}}>Sign in</Typography>
+                    {error && <Typography color="error">{error}</Typography>}
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}>
                         <FormControl>
                             <FormLabel htmlFor="email">Email</FormLabel>
                             <TextField
                                 type="email"
                                 name="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 placeholder="your@email.com"
                                 autoComplete="email"
                                 autoFocus
@@ -102,6 +96,8 @@ export default function SignIn() {
                             <FormLabel htmlFor="password">Password</FormLabel>
                             <TextField
                                 name="password"
+                                value={password} 
+                                onChange={(e) => setPassword(e.target.value)}
                                 placeholder="••••••"
                                 type="password"
                                 id="password"
@@ -117,25 +113,8 @@ export default function SignIn() {
                             control={<Checkbox value="remember" color="primary"/>}
                             label="Remember me"
                         />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            onClick={() => {
-                            }}
-                        >
-                            Sign in
-                        </Button>
-                        <Link
-                            component="button"
-                            type="button"
-                            onClick={() => {
-                            }}
-                            variant="body2"
-                            sx={{alignSelf: 'center'}}
-                        >
-                            Forgot your password?
-                        </Link>
+                        <Button type="submit" fullWidth variant="contained">Sign in</Button>
+                        <Link component="button" type="button" variant="body2" sx={{alignSelf: 'center'}}>Forgot your password?</Link>
                     </Box>
                 </Card>
             </SignInContainer>

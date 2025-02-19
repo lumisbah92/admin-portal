@@ -1,7 +1,7 @@
 import DashboardView from "@/sections/dashboard/views/dashboard-view";
 
 export const metadata = {
-    title: 'Dashbord',
+    title: 'Dashboard',
 };
 
 
