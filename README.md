@@ -38,7 +38,7 @@ This project is a functional admin portal built with Next.js (App Router) and Ty
 
 ## Deployment
 The project is deployed on Vercel. You can view the live application here:
-**Live Site Link:** [live link](live_link)
+**Live Site Link:** [https://huiblue-frontend.vercel.app/](https://huiblue-frontend.vercel.app/)
 
 ## Contact
 Feel free to reach out if you have any questions or issues, please contact [lumisbah92@gmail.com](mailto:lumisbah92@gmail.com).
