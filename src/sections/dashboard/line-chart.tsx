@@ -18,68 +18,25 @@ const LineChart: FC<LineChartProps> = ({ offersSent }) => {
   const offersData = days.map((day) => offersSent[day] || 0);
 
   const series = [
-    {
-      name: 'Offers sent',
-      data: offersData,
-    },
+    { name: 'Offers sent', data: offersData },
   ];
 
   const options: ApexCharts.ApexOptions = {
-    chart: {
-      type: 'line',
-      toolbar: {
-        show: false,
-      },
-      zoom: {
-        enabled: false,
-      },
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 3,
-      colors: ['#1C252E'], // Set line color
-    },
-    xaxis: {
-      categories: labels,
-      labels: {
-        style: {
-          colors: undefined,
-        },
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    yaxis: {
-      min: 0,
-      max: Math.max(...offersData) + 5,
-      tickAmount: 5,
-    },
-    grid: {
-      borderColor: '#E0E0E0',
-      strokeDashArray: 4,
-    },
-    markers: {
-      size: 0,
-    },
-    tooltip: {
-      enabled: false,
-    },
-    legend: {
-      show: false,
-    },
+    chart: { type: 'line', toolbar: { show: false }, zoom: { enabled: true } },
+    stroke: { curve: 'smooth', width: 3, colors: ['#1C252E'] },
+    xaxis: { categories: labels, axisBorder: { show: false }, axisTicks: { show: false }, labels: { style: { colors: undefined } } },
+    yaxis: { min: 0, max: Math.max(...offersData) + 5, tickAmount: 5 },
+    grid: { borderColor: '#E0E0E0', strokeDashArray: 4 },
+    markers: { size: 0 },
+    tooltip: { enabled: false },
+    legend: { show: false },
   };
 
   return (
     <Box sx={{ flex: 1 }}>
       <Card>
         <CardContent>
-          <Typography variant="h6" sx={{ color: 'text.primary', mb: 2 }}>
-            Offers sent
-          </Typography>
+          <Typography variant="h6" sx={{ color: 'text.primary', mb: 2 }}>Offers sent</Typography>
           <ReactApexChart options={options} series={series} type="line" />
         </CardContent>
       </Card>

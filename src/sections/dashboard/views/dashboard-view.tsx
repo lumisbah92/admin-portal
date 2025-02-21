@@ -142,11 +142,11 @@ export default function DashboardView() {
   }
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', overflow: 'hidden'}}>
       <SideBar navItems={navItems} />
-      <Box sx={{ flex: 1, p: 2, display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ flex: 1, p: 2, display: 'flex', flexDirection: 'column'}}>
         <Header dropdownOpen={dropdownOpen} setDropdownOpen={setDropdownOpen} logout={logout} />
-        <Box sx={{ flex: 1, overflow: 'auto', p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ flex: 1, overflowX: 'hidden', overflowY: 'auto', p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Typography variant="h4" sx={{ color: 'text.primary' }}>Dashboard</Typography>
           <DashboardSummary loadingSummary={loadingSummary} errorSummary={errorSummary} cards={cards} />
           <DashboardStat loadingStat={loadingStat} errorStat={errorStat} dashboardStat={dashboardStat} />
