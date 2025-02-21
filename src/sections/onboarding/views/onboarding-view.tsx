@@ -32,7 +32,7 @@ export default function OnboardingView() {
 
   if (isCheckingAuth) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
         <CircularProgress />
       </Box>
     );
@@ -40,9 +40,9 @@ export default function OnboardingView() {
   return (
     <Box sx={{ display: 'flex' }}>
       <SideBar navItems={navItems} />
-      <Box sx={{ flex: 1, p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box sx={{flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Header dropdownOpen={dropdownOpen} setDropdownOpen={setDropdownOpen} logout={logout} />
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, px: 2, py: 5 }}>
           <CreateOffer/>
         </Box>
       </Box>

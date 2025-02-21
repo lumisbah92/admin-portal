@@ -71,11 +71,7 @@ const OfferListTable: React.FC = () => {
     if (tabValue === 1 && offer.status !== 'accepted') return false;
 
     const lowerSearch = searchQuery.toLowerCase();
-    if (
-      !offer.user_name.toLowerCase().includes(lowerSearch) &&
-      !offer.email.toLowerCase().includes(lowerSearch) &&
-      !offer.phone.includes(lowerSearch)
-    ) {
+    if (![offer.user_name, offer.email, offer.phone].some(v => v.toLowerCase().includes(lowerSearch))) {
       return false;
     }
 
@@ -85,20 +81,21 @@ const OfferListTable: React.FC = () => {
   });
 
   const displayCount = searchQuery || selectedType ? filteredOffers.length : totalOffers;
-  const paginatedOffers = filteredOffers;
   const rowsPerPageOptions = [5, 10, 25, 50, 100];
 
   return (
-    <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 0, p: 0}}>
+    <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 0, p: 0, width: '100%' }}>
       <CardHeader
+        sx={{ px: {xs: 2, lg: 3} }}
         title={<Typography variant="h6" color="text.primary">Offer List</Typography>}
       />
       <CardContent sx={{ padding: '0px !important' }}>
-        <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)}
+        <Tabs
+          value={tabValue}
+          onChange={(e, newValue) => setTabValue(newValue)}
           sx={{
-            px: 3, borderBottom: "1px solid", borderColor: "divider",
+            px: {xs: 1, lg: 3}, borderBottom: '1px solid', borderColor: 'divider',
             '& .MuiTabs-indicator': { backgroundColor: (theme) => theme.palette.text.primary },
-            "&.Mui-selected": { color: "text.primary" },
           }}
           textColor="inherit"
         >
@@ -106,22 +103,20 @@ const OfferListTable: React.FC = () => {
           <Tab label="Accepted" />
         </Tabs>
 
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center', px: 3, py: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center', px: {xs: 1, lg: 3}, py: 2 }} >
           <TextField
             size="small"
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            sx={{ border: 'none', maxWidth: 505, width: '100%' }}
+            sx={{ border: 'none', width: { xs: '100%', lg: 505 } }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
+                <InputAdornment position="start"><SearchIcon /></InputAdornment>
               ),
             }}
           />
-          <FormControl size="small" sx={{ maxWidth: 200, width: '100%' }}>
+          <FormControl size="small" sx={{ maxWidth: { xs: '100%', lg: 200 }, width: '100%' }}>
             <InputLabel id="type-select-label">Type</InputLabel>
             <Select labelId="type-select-label" value={selectedType} label="Type" onChange={(e: SelectChangeEvent) => setSelectedType(e.target.value)}>
               <MenuItem value="">All</MenuItem>
@@ -140,64 +135,56 @@ const OfferListTable: React.FC = () => {
           <Typography color="error">{error}</Typography>
         ) : (
           <>
-            <TableContainer>
-              <Table>
+            <TableContainer sx={{ overflowX: 'auto', width: '100%' }}>
+              <Table sx={{ width: '100%', minWidth: { xs: 'auto' } }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Phone number</TableCell>
-                    <TableCell>Company</TableCell>
-                    <TableCell>Job Title</TableCell>
-                    <TableCell>Type</TableCell>
+                    <TableCell sx={{ px: { xs: 1, lg: 2 }}}>Name</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, px: { xs: 0, lg: 2 } }}>Phone number</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, px: { xs: 0, lg: 2 }}}>Company</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, px: { xs: 0, lg: 2 }}}>Job Title</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, px: { xs: 0, lg: 2 }}}>Type</TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {paginatedOffers.map((offer) => (
+                  {filteredOffers.map((offer) => (
                     <TableRow key={offer.id}>
-                      <TableCell>
+                      <TableCell sx={{ px: { xs: 1, lg: 2 } }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                           <Typography variant="body2" color="text.primary">{offer.user_name}</Typography>
                           <Typography variant="body2" color="text.disabled">{offer.email}</Typography>
                         </Box>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, px: { xs: 1, lg: 2 } }}>
                         <Typography variant="body2" color="text.primary">{offer.phone}</Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, px: { xs: 0, lg: 2 } }}>
                         <Typography variant="body2" color="text.primary">{offer.company}</Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, px: { xs: 0, lg: 2 } }}>
                         <Typography variant="body2" color="text.primary">{offer.jobTitle}</Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ width: 100, display: { xs: 'none', sm: 'table-cell' }, px: { xs: 0, lg: 2 } }}>
                         <Typography variant="body2" color="text.primary" sx={{ textTransform: 'capitalize' }}>{offer.type}</Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ px: { xs: 0, lg: 2}, width: 100 }}>
                         <Box sx={{ width: 'fit-content', px: 1, py: 0.5, borderRadius: '6px', ...getStatusColor(offer.status) }}>
-                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '12px', lineHeight: '20px', textTransform: 'capitalize' }}>
-                            {offer.status}
-                          </Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '12px', lineHeight: '20px', textTransform: 'capitalize' }}>{offer.status}</Typography>
                         </Box>
                       </TableCell>
-                      <TableCell align="right">
-                        <Stack direction="row" spacing={1}>
-                          <IconButton size="small">
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton size="small">
-                            <MoreIcon />
-                          </IconButton>
+                      <TableCell align="right" sx={{ px: { xs: 0, lg: 2 }, width: 50 }}>
+                        <Stack direction="row" spacing={1} alignItems={'end'} justifyContent="flex-end">
+                          <IconButton size="small"><EditIcon /></IconButton>
+                          <IconButton size="small"><MoreIcon /></IconButton>
                         </Stack>
                       </TableCell>
                     </TableRow>
                   ))}
-                  {paginatedOffers.length === 0 && (
+                  {filteredOffers.length === 0 && (
                     <TableRow>
-                      <TableCell colSpan={7} align="center">
-                        No offers found.
-                      </TableCell>
+                      <TableCell colSpan={7} align="center">No offers found.</TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -226,8 +213,3 @@ const OfferListTable: React.FC = () => {
 };
 
 export default OfferListTable;
-
-
-
-
-

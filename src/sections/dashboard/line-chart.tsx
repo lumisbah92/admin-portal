@@ -22,7 +22,7 @@ const LineChart: FC<LineChartProps> = ({ offersSent }) => {
   ];
 
   const options: ApexCharts.ApexOptions = {
-    chart: { type: 'line', toolbar: { show: false }, zoom: { enabled: true } },
+    chart: { type: 'line', toolbar: { show: false }, zoom: { enabled: false } },
     stroke: { curve: 'smooth', width: 3, colors: ['#1C252E'] },
     xaxis: { categories: labels, axisBorder: { show: false }, axisTicks: { show: false }, labels: { style: { colors: undefined } } },
     yaxis: { min: 0, max: Math.max(...offersData) + 5, tickAmount: 5 },
@@ -33,9 +33,9 @@ const LineChart: FC<LineChartProps> = ({ offersSent }) => {
   };
 
   return (
-    <Box sx={{ flex: 1 }}>
-      <Card>
-        <CardContent>
+    <Box sx={{ flex: 1, width: '100%' }}>
+      <Card sx={{ width: '100%'}}>
+        <CardContent sx={{p: { xs: "10px !important", md: "24px !important" }}}>
           <Typography variant="h6" sx={{ color: 'text.primary', mb: 2 }}>Offers sent</Typography>
           <ReactApexChart options={options} series={series} type="line" />
         </CardContent>

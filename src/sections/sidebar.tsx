@@ -13,7 +13,8 @@ const SideBar: React.FC<SideBarProps> = ({ navItems }) => {
   const router = useRouter();
 
   return (
-    <Box sx={{ maxWidth: 280, width: '100%', backgroundColor: 'background.default', borderRight: '1px solid', borderColor: 'divider', p: 2, display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ maxWidth: {xs: 180, lg:280}, display: {xs: 'none', md: 'flex'}, flexDirection: 'column', width: '100%', backgroundColor: 'background.default', borderRight: '1px solid', borderColor: 'divider', p: 2 }}>
+      <Box sx={{ position: 'sticky', top: 0, bgcolor: 'background.paper', zIndex: 1}}>
       <Box sx={{ height: 80, display: 'flex', alignItems: 'center', pl: 2 }}>
         <Image src="/assets/images/logo.png" alt="Logo" width={40} height={40} />
       </Box>
@@ -26,6 +27,7 @@ const SideBar: React.FC<SideBarProps> = ({ navItems }) => {
         </ListItem>
         )}
       </List>
+      </Box>
     </Box>
   );
 };

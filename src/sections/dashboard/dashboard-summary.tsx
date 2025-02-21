@@ -24,13 +24,14 @@ const DashboardSummary: React.FC<DashboardSummaryProps> = ({ loadingSummary, err
                     <Typography color="error">{errorSummary}</Typography>
                 </Box>
             ) : (
-                <Box sx={{ display: 'flex', flexDirection: 'row', gap: 3, flexWrap: 'wrap' }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, flexWrap: 'wrap' }}>
                     {cards.map((card, index) => (
                         <Card
                             key={index}
                             sx={{
-                                display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 148, flex: 1, borderRadius: 2, boxShadow: 2, bgcolor: '#FFFFFF', p: 3,
+                                display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 148, flex: 1, borderRadius: 2, boxShadow: 2, bgcolor: '#FFFFFF',
                                 transition: 'transform 0.3s, box-shadow 0.3s', '&:hover': { transform: 'scale(1.05)', boxShadow: 3 },
+                                p: { xs: "10px !important", md: "24px !important" }
                             }}
                         >
                             <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>{card.title}</Typography>

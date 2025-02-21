@@ -24,7 +24,7 @@ const DashboardStat: React.FC<DashboardStatProps> = ({ loadingStat, errorStat, d
                     <Typography color="error">{errorStat}</Typography>
                 </Box>
             ) : (
-                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'row', gap: 2 }}>
+                <Box sx={{ flex: 1, display: 'flex', flexDirection: {xs: 'column', lg:'row'}, gap: 2 }}>
                     {dashboardStat && (
                         <>
                             <BarChart websiteVisits={dashboardStat.website_visits} />

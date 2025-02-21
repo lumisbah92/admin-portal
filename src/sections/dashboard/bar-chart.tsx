@@ -24,7 +24,7 @@ const BarChart: FC<BarChartProps> = ({ websiteVisits }) => {
     ];
 
     const options: ApexCharts.ApexOptions = {
-        chart: { type: 'bar', toolbar: { show: false }, height: 350 },
+        chart: { type: 'bar', toolbar: { show: false } },
         plotOptions: { bar: { borderRadius: 4, columnWidth: '20px' } },
         colors: ['#007867', '#FFAB00'],
         dataLabels: { enabled: false },
@@ -37,7 +37,7 @@ const BarChart: FC<BarChartProps> = ({ websiteVisits }) => {
     return (
         <Box sx={{ flex: 1 }}>
             <Card>
-                <CardContent>
+                <CardContent sx={{p: { xs: "10px !important", md: "24px !important" }}}>
                     <Typography variant="h6" sx={{ color: 'text.primary', mb: 2 }}>
                         Website visits
                     </Typography>

@@ -19,29 +19,34 @@ const OfferSchema = z.object({
     plan_type: z.enum(['monthly', 'yearly', 'pay_as_you_go'], {
         required_error: 'Plan type is required',
     }),
-    additions: z.array(z.enum(['refundable', 'on_demand', 'negotiable'])),
-    user: z
-        .object({
-            id: z.number(),
-            name: z.string(),
-            email: z.string(),
-        })
-        .nullable()
-        .refine((val) => val !== null, { message: 'User is required' }),
+    additions: z.array(z.enum(['refundable', 'on_demand', 'negotiable']))
+        .min(1, { message: 'At least one addition is required' }),
+    user: z.object({
+        id: z.number({ required_error: 'User id is required' }),
+        name: z.string({ required_error: 'User name is required' }),
+        email: z.string({ required_error: 'User email is required' }),
+    }, { required_error: 'User is required' }),
     expired: z.preprocess(
         (val) => {
             if (val instanceof Date) return val;
-            if (typeof val === 'string') return new Date(val);
-            return val;
+            if (typeof val === 'string' && val.trim() !== '') return new Date(val);
+            return undefined;
         },
-        z.date().refine((date) => {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            return date >= today;
-        }, { message: 'Expired date should not be before today' })
+        z.date().refine(
+            (date) => !isNaN(date.getTime()),
+            { message: 'Invalid date provided' }
+        ).refine(
+            (date) => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return date >= today;
+            },
+            { message: 'Expired date should not be before today' }
+        )
     ),
     price: z.number({ required_error: 'Price is required' }),
 });
+
 
 type OfferFormData = z.infer<typeof OfferSchema>;
 
@@ -61,6 +66,7 @@ const CreateOffer: React.FC = () => {
     const [inputValue, setInputValue] = useState('');
     const [loading, setLoading] = useState(false);
     const [offerSent, setOfferSent] = useState(false);
+    const [isUserNull, setIsUserNull] = useState(false);
 
     useEffect(() => {
         if (!inputValue) {
@@ -90,6 +96,11 @@ const CreateOffer: React.FC = () => {
     }, [inputValue]);
 
     const onSubmit = async (data: OfferFormData) => {
+        if(data.user.id === 0) {
+            setIsUserNull(true);
+            setTimeout(() => setIsUserNull(false), 2000);
+            return;
+        }
         console.log('Validated Data:', data);
         const payload = {
             plan_type: data.plan_type,
@@ -195,6 +206,7 @@ const CreateOffer: React.FC = () => {
                                 />
                             ))}
                         </FormGroup>
+                        {errors.additions && <Typography color="error">{errors.additions.message}</Typography>}
                     </FormControl>
 
                     <FormControl fullWidth sx={{ gap: 1 }}>
@@ -231,7 +243,7 @@ const CreateOffer: React.FC = () => {
                                 />
                             )}
                         />
-                        {errors.user && <Typography color="error">{errors.user.message as string}</Typography>}
+                        {isUserNull && <Typography color="error">User is Required</Typography>}
                     </FormControl>
 
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -264,8 +276,9 @@ const CreateOffer: React.FC = () => {
                             type="number"
                             placeholder='$   Price'
                             {...register('price', { valueAsNumber: true })}
-                            helperText={errors.price ? errors.price.message : ''}
+                            // helperText={errors.price ? errors.price.message : ''}
                         />
+                         {errors.price && <Typography color="error">{errors.price.message}</Typography>}
                     </FormControl>
                 </Box>
             </Card>

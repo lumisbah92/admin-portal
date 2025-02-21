@@ -135,18 +135,18 @@ export default function DashboardView() {
 
   if (isCheckingAuth) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Box sx={{ display: 'flex', overflow: 'hidden'}}>
+    <Box sx={{ display: 'flex' }}>
       <SideBar navItems={navItems} />
-      <Box sx={{ flex: 1, p: 2, display: 'flex', flexDirection: 'column'}}>
+      <Box sx={{flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Header dropdownOpen={dropdownOpen} setDropdownOpen={setDropdownOpen} logout={logout} />
-        <Box sx={{ flex: 1, overflowX: 'hidden', overflowY: 'auto', p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box sx={{ width: '100%', height: '100%', flex: 1, overflowX: 'hidden', overflowY: 'auto', p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Typography variant="h4" sx={{ color: 'text.primary' }}>Dashboard</Typography>
           <DashboardSummary loadingSummary={loadingSummary} errorSummary={errorSummary} cards={cards} />
           <DashboardStat loadingStat={loadingStat} errorStat={errorStat} dashboardStat={dashboardStat} />
@@ -156,5 +156,6 @@ export default function DashboardView() {
     </Box>
   );
 }
+
 
 
