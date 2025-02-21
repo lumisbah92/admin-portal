@@ -1,7 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Box, Card, CardContent, CardHeader, Chip, FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, Tab, Tabs, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, TextField, Typography, CircularProgress } from '@mui/material';
+import { Box, Card, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, Tab, Tabs, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, TextField, Typography, CircularProgress, Stack, InputAdornment, SxProps, Theme } from '@mui/material';
+import EditIcon from '@assets/icons/edit_icon.svg';
+import MoreIcon from '@assets/icons/more_icon.svg';
+import SearchIcon from '@assets/icons/search_icon.svg';
 
 interface Offer {
   id: number;
@@ -15,16 +18,16 @@ interface Offer {
   price: number;
 }
 
-function getStatusColor(status: Offer['status']): 'default' | 'success' | 'error' | 'warning' {
+function getStatusColor(status: Offer['status']): SxProps<Theme> {
   switch (status) {
     case 'accepted':
-      return 'success';
+      return { bgcolor: '#22C55E29', color: '#118D57' };
     case 'rejected':
-      return 'error';
+      return { bgcolor: '#FF563029', color: '#B71D18' };
     case 'pending':
-      return 'warning';
+      return { bgcolor: '#FFAB0029', color: '#B76E00' };
     default:
-      return 'default';
+      return { bgcolor: 'grey.300', color: 'text.primary' };
   }
 }
 
@@ -53,7 +56,6 @@ const OfferListTable: React.FC = () => {
           return;
         }
         const data = await response.json();
-        // Data shape: { data: Offer[], links: {...}, meta: {...} }
         setOffers(data.data);
         setTotalOffers(data.meta.total);
       } catch (err: any) {
@@ -87,20 +89,42 @@ const OfferListTable: React.FC = () => {
   const rowsPerPageOptions = [5, 10, 25, 50, 100];
 
   return (
-    <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 0, p: 2 }}>
-      <CardHeader title="Offer List" />
-      <CardContent>
-        <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} sx={{ mb: 2 }}>
+    <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 0, p: 0}}>
+      <CardHeader
+        title={<Typography variant="h6" color="text.primary">Offer List</Typography>}
+      />
+      <CardContent sx={{ padding: '0px !important' }}>
+        <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)}
+          sx={{
+            px: 3, borderBottom: "1px solid", borderColor: "divider",
+            '& .MuiTabs-indicator': { backgroundColor: (theme) => theme.palette.text.primary },
+            "&.Mui-selected": { color: "text.primary" },
+          }}
+          textColor="inherit"
+        >
           <Tab label="All" />
           <Tab label="Accepted" />
         </Tabs>
 
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 2 }}>
-          <TextField size="small" placeholder="Search..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
-          <FormControl size="small" sx={{ minWidth: 120 }}>
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center', px: 3, py: 2 }}>
+          <TextField
+            size="small"
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{ border: 'none', maxWidth: 505, width: '100%' }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+          <FormControl size="small" sx={{ maxWidth: 200, width: '100%' }}>
             <InputLabel id="type-select-label">Type</InputLabel>
             <Select labelId="type-select-label" value={selectedType} label="Type" onChange={(e: SelectChangeEvent) => setSelectedType(e.target.value)}>
-              <MenuItem value="">All Types</MenuItem>
+              <MenuItem value="">All</MenuItem>
               <MenuItem value="Monthly">Monthly</MenuItem>
               <MenuItem value="Yearly">Yearly</MenuItem>
               <MenuItem value="Pay As You Go">Pay As You Go</MenuItem>
@@ -126,7 +150,7 @@ const OfferListTable: React.FC = () => {
                     <TableCell>Job Title</TableCell>
                     <TableCell>Type</TableCell>
                     <TableCell>Status</TableCell>
-                    <TableCell align="right">Actions</TableCell>
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -134,31 +158,38 @@ const OfferListTable: React.FC = () => {
                     <TableRow key={offer.id}>
                       <TableCell>
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                          <Typography variant="subtitle2">{offer.user_name}</Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {offer.email}
+                          <Typography variant="body2" color="text.primary">{offer.user_name}</Typography>
+                          <Typography variant="body2" color="text.disabled">{offer.email}</Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color="text.primary">{offer.phone}</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color="text.primary">{offer.company}</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color="text.primary">{offer.jobTitle}</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" color="text.primary" sx={{ textTransform: 'capitalize' }}>{offer.type}</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ width: 'fit-content', px: 1, py: 0.5, borderRadius: '6px', ...getStatusColor(offer.status) }}>
+                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '12px', lineHeight: '20px', textTransform: 'capitalize' }}>
+                            {offer.status}
                           </Typography>
                         </Box>
                       </TableCell>
-                      <TableCell>{offer.phone}</TableCell>
-                      <TableCell>{offer.company}</TableCell>
-                      <TableCell>{offer.jobTitle}</TableCell>
-                      <TableCell>{offer.type.charAt(0).toUpperCase() + offer.type.slice(1)}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={offer.status}
-                          color={getStatusColor(offer.status)}
-                          variant="outlined"
-                          sx={{ textTransform: 'capitalize' }}
-                        />
-                      </TableCell>
                       <TableCell align="right">
-                        <IconButton size="small" sx={{ mr: 1 }}>
-                          Edit
-                        </IconButton>
-                        <IconButton size="small">
-                          Delete
-                        </IconButton>
+                        <Stack direction="row" spacing={1}>
+                          <IconButton size="small">
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton size="small">
+                            <MoreIcon />
+                          </IconButton>
+                        </Stack>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -172,7 +203,7 @@ const OfferListTable: React.FC = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mr: 4 }}>
               <TablePagination
                 component="div"
                 count={displayCount}
@@ -195,4 +226,8 @@ const OfferListTable: React.FC = () => {
 };
 
 export default OfferListTable;
+
+
+
+
 

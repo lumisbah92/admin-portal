@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Box, Button, Checkbox, CssBaseline, FormControlLabel, FormLabel, FormControl, Link, TextField, Typography, Stack, Card as MuiCard, styled } from '@mui/material';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
+import ForgotPassword from '../forgot-password';
 
 const Card = styled(MuiCard)(({theme}) => ({
     display: 'flex',
@@ -54,6 +55,7 @@ export default function SignIn() {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
+  const [isOpenForgetPassword, setIsOpenForgetPassword] = React.useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -69,6 +71,7 @@ export default function SignIn() {
 
   return (
     <>
+      {isOpenForgetPassword && <ForgotPassword open={isOpenForgetPassword} handleClose={() => setIsOpenForgetPassword(false)} /> }
       <CssBaseline />
       <SignInContainer>
         <Card variant="outlined">
@@ -114,7 +117,7 @@ export default function SignIn() {
                             label="Remember me"
                         />
                         <Button type="submit" fullWidth variant="contained">Sign in</Button>
-                        <Link component="button" type="button" variant="body2" sx={{alignSelf: 'center'}}>Forgot your password?</Link>
+                        <Link onClick={() => setIsOpenForgetPassword(true)} component="button" type="button" variant="body2" sx={{alignSelf: 'center'}}>Forgot your password?</Link>
                     </Box>
                 </Card>
             </SignInContainer>
