@@ -47,7 +47,16 @@ const OfferListTable: React.FC = () => {
     const fetchOffers = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`https://dummy-1.hiublue.com/api/offers?page=${page + 1}&per_page=${rowsPerPage}`, {
+        const url = new URL('https://dummy-1.hiublue.com/api/offers');
+        url.searchParams.append('page', (page + 1).toString());
+        url.searchParams.append('per_page', rowsPerPage.toString());
+        
+        // Append filtering parameters
+        if (tabValue === 1) url.searchParams.append('status', 'accepted');
+        if (searchQuery) url.searchParams.append('search', searchQuery);
+        if (selectedType) url.searchParams.append('type', selectedType);
+
+        const response = await fetch(url.toString(), {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         if (!response.ok) {
@@ -64,29 +73,16 @@ const OfferListTable: React.FC = () => {
         setLoading(false);
       }
     };
+
     fetchOffers();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, tabValue, searchQuery, selectedType]);
 
-  const filteredOffers = offers.filter((offer) => {
-    if (tabValue === 1 && offer.status !== 'accepted') return false;
-
-    const lowerSearch = searchQuery.toLowerCase();
-    if (![offer.user_name, offer.email, offer.phone].some(v => v.toLowerCase().includes(lowerSearch))) {
-      return false;
-    }
-
-    if (selectedType && offer.type.toLowerCase() !== selectedType.toLowerCase()) return false;
-
-    return true;
-  });
-
-  const displayCount = searchQuery || selectedType ? filteredOffers.length : totalOffers;
   const rowsPerPageOptions = [5, 10, 25, 50, 100];
 
   return (
     <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 0, p: 0, width: '100%' }}>
       <CardHeader
-        sx={{ px: {xs: 2, lg: 3} }}
+        sx={{ px: { xs: 2, lg: 3 } }}
         title={<Typography variant="h6" color="text.primary">Offer List</Typography>}
       />
       <CardContent sx={{ padding: '0px !important' }}>
@@ -103,7 +99,7 @@ const OfferListTable: React.FC = () => {
           <Tab label="Accepted" />
         </Tabs>
 
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center', px: {xs: 1, lg: 3}, py: 2 }} >
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center', px: { xs: 1, lg: 3 }, py: 2 }}>
           <TextField
             size="small"
             placeholder="Search..."
@@ -139,17 +135,17 @@ const OfferListTable: React.FC = () => {
               <Table sx={{ width: '100%', minWidth: { xs: 'auto' } }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell sx={{ px: { xs: 1, lg: 2 }}}>Name</TableCell>
+                    <TableCell sx={{ px: { xs: 1, lg: 2 } }}>Name</TableCell>
                     <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, px: { xs: 0, lg: 2 } }}>Phone number</TableCell>
-                    <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, px: { xs: 0, lg: 2 }}}>Company</TableCell>
-                    <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, px: { xs: 0, lg: 2 }}}>Job Title</TableCell>
-                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, px: { xs: 0, lg: 2 }}}>Type</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, px: { xs: 0, lg: 2 } }}>Company</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', lg: 'table-cell' }, px: { xs: 0, lg: 2 } }}>Job Title</TableCell>
+                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' }, px: { xs: 0, lg: 2 } }}>Type</TableCell>
                     <TableCell>Status</TableCell>
                     <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredOffers.map((offer) => (
+                  {offers.map((offer) => (
                     <TableRow key={offer.id}>
                       <TableCell sx={{ px: { xs: 1, lg: 2 } }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -169,20 +165,20 @@ const OfferListTable: React.FC = () => {
                       <TableCell sx={{ width: 100, display: { xs: 'none', sm: 'table-cell' }, px: { xs: 0, lg: 2 } }}>
                         <Typography variant="body2" color="text.primary" sx={{ textTransform: 'capitalize' }}>{offer.type}</Typography>
                       </TableCell>
-                      <TableCell sx={{ px: { xs: 0, lg: 2}, width: 100 }}>
+                      <TableCell sx={{ px: { xs: 0, lg: 2 }, width: 100 }}>
                         <Box sx={{ width: 'fit-content', px: 1, py: 0.5, borderRadius: '6px', ...getStatusColor(offer.status) }}>
                           <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '12px', lineHeight: '20px', textTransform: 'capitalize' }}>{offer.status}</Typography>
                         </Box>
                       </TableCell>
                       <TableCell align="right" sx={{ px: { xs: 0, lg: 2 }, width: 50 }}>
-                        <Stack direction="row" spacing={1} alignItems={'end'} justifyContent="flex-end">
+                        <Stack direction="row" spacing={1} alignItems="end" justifyContent="flex-end">
                           <IconButton size="small"><EditIcon /></IconButton>
                           <IconButton size="small"><MoreIcon /></IconButton>
                         </Stack>
                       </TableCell>
                     </TableRow>
                   ))}
-                  {filteredOffers.length === 0 && (
+                  {offers.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={7} align="center">No offers found.</TableCell>
                     </TableRow>
@@ -193,7 +189,7 @@ const OfferListTable: React.FC = () => {
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mr: 4 }}>
               <TablePagination
                 component="div"
-                count={displayCount}
+                count={totalOffers}
                 page={page}
                 onPageChange={(e, newPage) => setPage(newPage)}
                 rowsPerPage={rowsPerPage}
